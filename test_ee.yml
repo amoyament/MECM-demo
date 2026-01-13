@@ -1,0 +1,12 @@
+---
+- name: Verify MECM and Windows Collections
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: List installed collections
+      command: ansible-galaxy collection list
+      register: collection_output
+
+    - name: Show collections
+      debug:
+        var: collection_output.stdout_lines
