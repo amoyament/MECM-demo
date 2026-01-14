@@ -1,13 +1,13 @@
 ---
 - name: "Zero-Day Patch Compliance Check"
-  hosts: PROD-Web-Servers
+  hosts: "{{ target_collection }}"
   tasks:
     - name: Define Target Patching Level
       microsoft.mecm.mecm_package_info:
-        name: "Zero-Day Remediation: CVE-2026-0114"
+        name: "{{ patch_name }}"
         site_code: "PS1"
       register: pkg_info
 
     - name: Verify Device Compliance
       ansible.builtin.debug:
-        msg: "CRITICAL: Device requires {{ pkg_info.packages[0].name }}. Starting drain."
+        msg: "CRITICAL: Device requires {{ patch_name }}. Starting drain."

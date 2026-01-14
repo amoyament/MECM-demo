@@ -12,8 +12,8 @@
         seconds: 30
 
 - name: "Execute Zero-Day Patching"
-  hosts: PROD-Web-Servers
+  hosts: "{{ target_collection }}"
   tasks:
-    - name: Triggering MECM Remediation Patch Deployment
+    - name: Triggering MECM Remediation {{ patch_name }} Deployment
       microsoft.mecm.mecm_client_action:
         action: software_distribution_evaluation
