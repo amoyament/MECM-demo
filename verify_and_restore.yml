@@ -9,7 +9,7 @@
       failed_when: iis.services[0].state != 'running'
 
     - name: Force MECM Console Update
-      microsoft.mecm.mecm_client_action:
+      microsoft.mecm.client_action:
         action: software_inventory_evaluation
 
 - name: "Restore Traffic"
