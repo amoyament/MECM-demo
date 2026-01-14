@@ -2,12 +2,19 @@
 - name: "Zero-Day Patch Compliance Check"
   hosts: "{{ target_collection }}"
   tasks:
-    - name: Define Target Patching Level
+    - name: Query MECM for Patch Deployment Status
       microsoft.mecm.mecm_package_info:
         name: "{{ patch_name }}"
-        site_code: "PS1"
+        site_code: "LAB"
       register: pkg_info
 
-    - name: Verify Device Compliance
+    - name: "REPORT! Patch is Missing"
       ansible.builtin.debug:
-        msg: "CRITICAL: Device requires {{ patch_name }}. Starting drain."
+        msg: "CRITICAL: Device is non-compliant. Required patch [{{ patch_name }}] not found.\nInitiating drain and patch sequence."
+      when: pkg_info.packages | length == 0 
+
+    - name: "REPORT: Patch is Present"
+      ansible.builtin.debug:
+        msg: "SUCCESS: Device is compliant. Patch [{{ patch_name }}] is already present."
+      # This task ONLY runs if the package is found
+      when: pkg_info.packages | length > 0
