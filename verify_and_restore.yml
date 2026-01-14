@@ -1,5 +1,5 @@
 ---
-- name: "Step 6 & 7a: Success Confirmation"
+- name: "Confirm Successful Patch"
   hosts: PROD-Web-Servers
   tasks:
     - name: Confirm App is running as expected
