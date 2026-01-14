@@ -1,0 +1,19 @@
+---
+- name: "Redirect Traffic from Servers"
+  hosts: PROD-Load-Balancers
+  tasks:
+    - name: "DRAINING TRAFFIC: Removing node from active pool"
+      ansible.windows.win_service:
+        name: "{{ lb_service_alias }}"
+        state: stopped
+
+    - name: "Wait for connections to clear (Simulation)"
+      ansible.builtin.pause:
+        seconds: 30
+
+- name: "Execute Zero-Day Patching"
+  hosts: PROD-Web-Servers
+  tasks:
+    - name: Triggering MECM Remediation Patch Deployment
+      microsoft.mecm.mecm_client_action:
+        action: software_distribution_evaluation

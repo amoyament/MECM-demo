@@ -4,9 +4,10 @@
   gather_facts: false
   tasks:
     - name: List installed collections
-      command: ansible-galaxy collection list
+      ansible.builtin.command: ansible-galaxy collection list
       register: collection_output
+      changed_when: false
 
     - name: Show collections
-      debug:
+      ansible.builtin.debug:
         var: collection_output.stdout_lines

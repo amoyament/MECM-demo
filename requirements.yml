@@ -1,0 +1,5 @@
+---
+collections:
+  - microsoft.mecm
+  - ansible.windows
+  - community.general 

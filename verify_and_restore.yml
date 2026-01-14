@@ -1,0 +1,21 @@
+---
+- name: "Step 6 & 7a: Success Confirmation"
+  hosts: PROD-Web-Servers
+  tasks:
+    - name: Confirm App is running as expected
+      ansible.windows.win_service_info:
+        name: W3SVC
+      register: iis
+      failed_when: iis.services[0].state != 'running'
+
+    - name: Force MECM Console Update
+      microsoft.mecm.mecm_client_action:
+        action: software_inventory_evaluation
+
+- name: "Restore Traffic"
+  hosts: PROD-Load-Balancers
+  tasks:
+    - name: "RESTORING TRAFFIC: Re-enabling node in load balancer pool"
+      ansible.windows.win_service:
+        name: "{{ lb_service_alias }}"
+        state: started
