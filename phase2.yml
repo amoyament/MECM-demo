@@ -6,7 +6,7 @@
     - name: Check Deployment Status from MECM
       microsoft.mecm.software_update_deployment_info:
         site_code: "PS1"
-        name: "Monthly-Web-Patching"
+        name: "web-security-patches"
         collection_name: "PROD-Web-Servers"
       register: deploy_status
 

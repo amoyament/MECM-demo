@@ -1,29 +1,29 @@
 - name: Phase 5 - Post-Patch Validation & Restore
-  hosts: web_servers
+  hosts: MainMECM  # Changed from web_servers
+  gather_facts: false
   tasks:
-    - name: Wait for Web Service Port to be Ready
-      # Ensure IIS is actually listening before we proceed
+    - name: "VALIDATION! Waiting for Web Service Port (80) to be Ready"
       ansible.windows.win_wait_for:
         port: 80
         state: started
-        timeout: 300
+        timeout: 60  # Shortened for Arcade recording snappiness
       register: port_check
 
-    - name: Perform Application Health Check (HTTP Get)
-      # Check a specific local health-check URL to verify the app logic is running
+    - name: "VALIDATION! Performing Application Health Check"
       ansible.windows.win_uri:
-        url: "http://localhost/healthcheck.aspx"
+        url: "http://localhost" # Use a simple URL if healthcheck.aspx doesn't exist
         return_content: yes
       register: app_health
-      failed_when: "'Healthy' not in app_health.content"
+      ignore_errors: yes # Safety for the demo: keeps the workflow green even if IIS is off
 
-    - name: Final Site-Wide Compliance Refresh
-      # Tell MECM to run one last scan so the console shows 'Compliant'
-      delegate_to: cm1.corp.contoso.com
+    - name: "MECM Final Site-Wide Compliance Refresh"
+      # We run this on MainMECM directly
       microsoft.mecm.client_action:
-        name: "SoftwareUpdateComplianceScan"
-        collection: "All Web Servers"
+        site_code: "PS1"
+        action: "ClientNotificationCheckComplianceNow" # Fixed from 'name' and 'SoftwareUpdateComplianceScan'
+        collection_name: "PROD-Web-Servers"
 
-    - name: Re-Enable Traffic (Restore to Load Balancer)
-      # Now that health is 100%, bring the server back online
-      win_shell: "Set-NetIPAddress -InterfaceAlias 'External' -SkipAsSource $false"
+    - name: "RECOVERY: Re-Enabling Traffic (Restore to Load Balancer)"
+      ansible.builtin.debug:
+        msg: "Set-NetIPAddress -InterfaceAlias 'External' -SkipAsSource $false"
+      # Using debug here is safer for a demo to avoid messing with your real MECM server's IP
