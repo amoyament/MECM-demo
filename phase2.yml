@@ -14,5 +14,6 @@
       # This will fail if any server is 'Non-Compliant' or 'Missing'
       ansible.builtin.assert:
         that:
-          - deploy_status.deployments[0].compliant_count == deploy_status.deployments[0].target_count
+          - deploy_status.software_update_deployments | length > 0
+          - deploy_status.software_update_deployments[0].compliant_count == deploy_status.software_update_deployments[0].target_count
         fail_msg: "Compliance Failure: Web servers are missing required patches. Triggering Drain Workflow."
