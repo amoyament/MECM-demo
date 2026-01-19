@@ -1,4 +1,4 @@
-- name: Phase 5 - Post-Patch Validation & Restore
+- name: Post-Patch Validation & Restore
   hosts: MainMECM  # Changed from web_servers
   gather_facts: false
   tasks:

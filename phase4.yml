@@ -1,5 +1,5 @@
 ---
-- name: Phase 4 - Remediate and Restore (Simulation)
+- name: Remediate and Restore Web Servers Compliance
   hosts: MainMECM
   gather_facts: false
   tasks:
