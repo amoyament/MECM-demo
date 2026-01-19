@@ -1,4 +1,4 @@
-- name: Post-Patch Validation & Restore
+- name: Post-Patch Validation & Restore Web Server Traffic
   hosts: MainMECM  # Changed from web_servers
   gather_facts: false
   tasks:
