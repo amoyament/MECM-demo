@@ -5,18 +5,21 @@
   tasks:
     - name: Create a Software Update Group for the Demo
       microsoft.mecm.software_update_group:
+        site_code: "PS1"
         name: "{{ update_group }}"
         state: present
       register: sug_info
 
     - name: Add your new dummy KBs to the Group
       microsoft.mecm.software_update_group_membership:
+        site_code: "PS1"
         name: "{{ update_group }}"
         updates: "{{ updates_list }}"
         state: present
 
     - name: Deploy the Policy as 'Required' to Web Servers
       microsoft.mecm.software_update_deployment:
+        site_code: "PS1"
         name: "Monthly-Web-Patching"
         collection: "All Web Servers"
         software_update_group: "{{ update_group }}"
