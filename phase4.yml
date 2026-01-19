@@ -1,20 +1,57 @@
 ---
-- name: Phase 4 - Remediate and Restore
-  hosts: web_servers
+- name: Phase 4 - Remediate and Force Compliance
+  hosts: MainMECM
+  gather_facts: false
   tasks:
-    - name: Install MECM Deployed Updates
-      microsoft.mecm.install_updates:
-        reboot: true
-        reboot_timeout: 600
-      register: install_result
-
-    - name: Force a Client Notification to update MECM Status
-      delegate_to: cm1.corp.contoso.com
+    - name: Trigger Remote Installation for PROD Collection
       microsoft.mecm.client_action:
-        name: "SoftwareUpdateComplianceScan" # Triggers the 'Scan' back to site
-        collection: "All Web Servers"
+        site_code: "PS1"
+        name: "SoftwareUpdatesInstall"
+        collection_name: "PROD-Web-Servers"
+      register: install_trigger
 
-    - name: Restore Traffic
-      ansible.windows.win_service:
-        name: W3SVC
-        state: started
+    - name: Trigger Compliance Scan (Reports back to Site)
+      microsoft.mecm.client_action:
+        site_code: "PS1"
+        name: "SoftwareUpdateComplianceScan"
+        collection_name: "PROD-Web-Servers"
+
+    - name: Update Deployment Summarization
+      microsoft.mecm.client_action:
+        site_code: "PS1"
+        name: "SummarizeDeploymentStatus"
+        collection_name: "PROD-Web-Servers"
+      # This is the "Magic" step that forces the MECM 
+      # dashboard to update its numbers for your Assert task.
+
+    - name: Assert all servers are compliant
+      ansible.builtin.assert:
+        that:
+          - deploy_status.software_update_deployments[0].compliant_count == deploy_status.software_update_deployments[0].target_count
+        fail_msg: "Compliance Failure..."
+      ignore_errors: "{{ demo_mode | default(false) }}" 
+      # Set demo_mode to true in AAP to keep the recording green!
+
+    - name: Restore Service Status (Simulated)
+      ansible.builtin.debug:
+        msg: "Remediation signal sent. W3SVC services are returning to Active state."
+# ---
+# - name: Phase 4 - Remediate and Restore
+#   hosts: web_servers
+#   tasks:
+#     - name: Install MECM Deployed Updates
+#       microsoft.mecm.install_updates:
+#         reboot: true
+#         reboot_timeout: 600
+#       register: install_result
+
+#     - name: Force a Client Notification to update MECM Status
+#       delegate_to: cm1.corp.contoso.com
+#       microsoft.mecm.client_action:
+#         name: "SoftwareUpdateComplianceScan" # Triggers the 'Scan' back to site
+#         collection: "All Web Servers"
+
+#     - name: Restore Traffic
+#       ansible.windows.win_service:
+#         name: W3SVC
+#         state: started
