@@ -1,5 +1,5 @@
 ---
-- name: Remediate and Restore Web Servers Compliance
+- name: Remediate Web Servers Compliance
   hosts: MainMECM
   gather_facts: false
   tasks:
