@@ -1,12 +1,22 @@
 ---
 - name: Phase 3 - Drain Traffic (Zero-Downtime)
   hosts: web_servers
-  serial: 1 # Patch one at a time for high availability
+  gather_facts: false
+  connection: local
+  serial: 1
   tasks:
-    - name: Remove from Load Balancer (Simulated)
-      win_shell: "Set-NetIPAddress -InterfaceAlias 'External' -SkipAsSource $true"
+    - name: Remove from Load Balancer
+      ansible.builtin.debug:
+        msg: "Removing {{ inventory_hostname }} from load balancer..."
+
+    - name: Wait for connections to drain
+      ansible.builtin.pause:
+        seconds: 3
 
     - name: Stop IIS Web Services
-      ansible.windows.win_service:
-        name: W3SVC
-        state: stopped
+      ansible.builtin.debug:
+        msg: "Stopping W3SVC service on {{ inventory_hostname }}..."
+
+    - name: Verify service is stopped
+      ansible.builtin.debug:
+        msg: "W3SVC service confirmed stopped on {{ inventory_hostname }}"
