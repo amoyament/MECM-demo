@@ -7,15 +7,16 @@
       microsoft.mecm.software_update_group:
         site_code: "PS1"
         name: "{{ update_group }}"
+        software_update_ids: "{{ updates_list }}"
         state: present
       register: sug_info
 
-    - name: Add your new dummy KBs to the Group
-      microsoft.mecm.software_update_group_membership:
-        site_code: "PS1"
-        name: "{{ update_group }}"
-        updates: "{{ updates_list }}"
-        state: present
+    # - name: Add your new dummy KBs to the Group
+      # microsoft.mecm.software_update_group_membership:
+      #   site_code: "PS1"
+      #   name: "{{ update_group }}"
+      #   updates: "{{ updates_list }}"
+      #   state: present
 
     - name: Deploy the Policy as 'Required' to Web Servers
       microsoft.mecm.software_update_deployment:
