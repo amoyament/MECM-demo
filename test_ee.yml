@@ -11,3 +11,19 @@
     - name: Show collections
       ansible.builtin.debug:
         var: collection_output.stdout_lines
+    - name: Check installed Python libraries
+      ansible.builtin.command: pip list
+      register: pip_output
+      changed_when: false
+
+    - name: Show Python libraries
+      ansible.builtin.debug:
+        var: pip_output.stdout_lines
+
+    - name: Verify required Python libraries are installed
+      ansible.builtin.assert:
+        that:
+          - "'pywinrm' in pip_output.stdout"
+          - "'requests' in pip_output.stdout"
+        fail_msg: "Required Python libraries are missing (pywinrm, requests)"
+        success_msg: "All required Python libraries are installed"
