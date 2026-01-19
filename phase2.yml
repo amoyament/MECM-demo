@@ -4,21 +4,14 @@
   gather_facts: false
   tasks:
     - name: Check Deployment Status from MECM
-      # delegate_to: MainMECM
       microsoft.mecm.software_update_deployment_info:
         site_code: "PS1"
-        collection_id: "PS100017"
-        #name: "Monthly-Web-Patching"
+        name: "Monthly-Web-Patching"
+        collection_name: "PROD-Web-Servers"
       register: deploy_status
 
-    - name: Filter for Monthly-Web-Patching deployment
-      set_fact:
-        target_deployment: "{{ deploy_status.software_update_deployments | selectattr('name', 'equalto', 'Monthly-Web-Patching') | first }}"
-
     - name: Assert all servers are compliant
-      # This will fail if any server is 'Non-Compliant' or 'Missing'
       ansible.builtin.assert:
         that:
-          - target_deployment is defined
-          - target_deployment.compliant_count == target_deployment.target_count
+          - deploy_status.software_update_deployments[0].compliant_count == deploy_status.software_update_deployments[0].target_count
         fail_msg: "Compliance Failure: Web servers are missing required patches. Triggering Drain Workflow."
