@@ -1,6 +1,7 @@
 ---
 - name: Compliance Assertion
-  hosts: MainMECM
+  hosts: localhost
+  gather_facts: false
   tasks:
     - name: Check Deployment Status from MECM
       # delegate_to: MainMECM
