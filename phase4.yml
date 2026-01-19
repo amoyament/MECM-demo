@@ -6,7 +6,7 @@
     - name: Trigger Remote Installation for PROD Collection
       microsoft.mecm.client_action:
         site_code: "PS1"
-        name: "SoftwareUpdatesInstall"
+        action: "SoftwareUpdatesInstall"
         collection_name: "PROD-Web-Servers"
       register: install_trigger
 
