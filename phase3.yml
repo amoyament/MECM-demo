@@ -1,6 +1,6 @@
 ---
 - name: Phase 3 - Drain Traffic (Zero-Downtime)
-  hosts: web_servers
+  hosts: PROD-Web-Servers
   gather_facts: false
   connection: local
   serial: 1
