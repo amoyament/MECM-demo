@@ -22,8 +22,8 @@
       microsoft.mecm.software_update_deployment:
         site_code: "PS1"
         name: "Monthly-Web-Patching"
-        collection: "All Web Servers"
-        software_update_group: "{{ update_group }}"
+        collection_name: "All Web Servers"
+        software_update_group_name: "{{ update_group }}"
         deployment_type: required
-        deadline_date: "2026-01-16"
+        deadline_time: "2026-01-16"
         state: present
