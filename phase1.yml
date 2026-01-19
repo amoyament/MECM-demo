@@ -1,6 +1,6 @@
 ---
 - name: Define Compliance Policy
-  hosts: cm1.corp.contoso.com
+  hosts: MainMECM
   tasks:
     - name: Create a Software Update Group for the Demo
       microsoft.mecm.software_update_group:
