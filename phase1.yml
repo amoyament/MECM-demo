@@ -25,5 +25,8 @@
         collection_name: "PROD-Web-Servers"
         software_update_group_name: "{{ update_group }}"
         deployment_type: required
-        deadline_time: "2026-01-16"
+        deployment_timezone: "UTC"
+        available_time: 0
+        deadline_time: 0
+        description: "Demo Security deployment for compliance"
         state: present
