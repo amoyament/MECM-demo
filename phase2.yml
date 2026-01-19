@@ -1,9 +1,9 @@
 ---
-- name: Phase 2 - Compliance Assertion
-  hosts: web_servers
+- name: Compliance Assertion
+  hosts: MainMECM
   tasks:
     - name: Check Deployment Status from MECM
-      delegate_to: cm1.corp.contoso.com
+      # delegate_to: MainMECM
       microsoft.mecm.software_update_deployment_info:
         name: "Monthly-Web-Patching"
       register: deploy_status
