@@ -6,6 +6,7 @@
     - name: Check Deployment Status from MECM
       # delegate_to: MainMECM
       microsoft.mecm.software_update_deployment_info:
+        site_code: "PS1"
         name: "Monthly-Web-Patching"
       register: deploy_status
 
