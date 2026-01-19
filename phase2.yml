@@ -1,0 +1,16 @@
+---
+- name: Phase 2 - Compliance Assertion
+  hosts: web_servers
+  tasks:
+    - name: Check Deployment Status from MECM
+      delegate_to: cm1.corp.contoso.com
+      microsoft.mecm.software_update_deployment_info:
+        name: "Monthly-Web-Patching"
+      register: deploy_status
+
+    - name: Assert all servers are compliant
+      # This will fail if any server is 'Non-Compliant' or 'Missing'
+      ansible.builtin.assert:
+        that:
+          - deploy_status.deployments[0].compliant_count == deploy_status.deployments[0].target_count
+        fail_msg: "Compliance Failure: Web servers are missing required patches. Triggering Drain Workflow."

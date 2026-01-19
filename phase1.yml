@@ -1,0 +1,24 @@
+---
+- name: Define Compliance Policy
+  hosts: cm1.corp.contoso.com
+  tasks:
+    - name: Create a Software Update Group for the Demo
+      microsoft.mecm.software_update_group:
+        name: "{{ update_group }}"
+        state: present
+      register: sug_info
+
+    - name: Add your new dummy KBs to the Group
+      microsoft.mecm.software_update_group_membership:
+        name: "{{ update_group }}"
+        updates: "{{ updates_list }}"
+        state: present
+
+    - name: Deploy the Policy as 'Required' to Web Servers
+      microsoft.mecm.software_update_deployment:
+        name: "Monthly-Web-Patching"
+        collection: "All Web Servers"
+        software_update_group: "{{ update_group }}"
+        deployment_type: required
+        deadline_date: "2026-01-16"
+        state: present

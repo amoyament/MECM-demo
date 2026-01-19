@@ -1,0 +1,12 @@
+---
+- name: Phase 3 - Drain Traffic (Zero-Downtime)
+  hosts: web_servers
+  serial: 1 # Patch one at a time for high availability
+  tasks:
+    - name: Remove from Load Balancer (Simulated)
+      win_shell: "Set-NetIPAddress -InterfaceAlias 'External' -SkipAsSource $true"
+
+    - name: Stop IIS Web Services
+      ansible.windows.win_service:
+        name: W3SVC
+        state: stopped

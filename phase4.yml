@@ -1,0 +1,20 @@
+---
+- name: Phase 4 - Remediate and Restore
+  hosts: web_servers
+  tasks:
+    - name: Install MECM Deployed Updates
+      microsoft.mecm.install_updates:
+        reboot: true
+        reboot_timeout: 600
+      register: install_result
+
+    - name: Force a Client Notification to update MECM Status
+      delegate_to: cm1.corp.contoso.com
+      microsoft.mecm.client_action:
+        name: "SoftwareUpdateComplianceScan" # Triggers the 'Scan' back to site
+        collection: "All Web Servers"
+
+    - name: Restore Traffic
+      ansible.windows.win_service:
+        name: W3SVC
+        state: started
