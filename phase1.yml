@@ -7,7 +7,7 @@
       microsoft.mecm.software_update_group:
         site_code: "PS1"
         name: "{{ update_group }}"
-        software_update_ids: "{{ updates_list }}"
+        software_update_names: "{{ updates_list }}"
         state: present
       register: sug_info
 
