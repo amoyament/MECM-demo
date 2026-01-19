@@ -1,6 +1,7 @@
 ---
 - name: Define Compliance Policy
   hosts: MainMECM
+  gather_facts: false
   tasks:
     - name: Create a Software Update Group for the Demo
       microsoft.mecm.software_update_group:
