@@ -26,7 +26,7 @@
         software_update_group_name: "{{ update_group }}"
         deployment_type: required
         deployment_timezone: "UTC"
-        available_time: 0
-        deadline_time: 0
+        available_time: "2026-01-19T14:00:00"
+        deadline_time: "2026-01-20T14:00:00"
         description: "Demo Security deployment for compliance"
         state: present
