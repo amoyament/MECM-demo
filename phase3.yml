@@ -5,18 +5,20 @@
   connection: local
   serial: 1
   tasks:
-    - name: Remove from Load Balancer
+    - name: "LOAD BALANCER: Removing {{ inventory_hostname }} from Pool"
       ansible.builtin.debug:
-        msg: "Removing {{ inventory_hostname }} from load balancer..."
+        msg: "Executing: Set-LoadBalancerNode -State Offline -Node {{ inventory_hostname }}"
+      changed_when: true # Forces the "Changed" status in AAP
 
-    - name: Wait for connections to drain
+    - name: "DRAIN: Waiting for active connections to drop"
       ansible.builtin.pause:
         seconds: 3
 
-    - name: Stop IIS Web Services
+    - name: "SERVICE: Stopping IIS Web Services"
       ansible.builtin.debug:
-        msg: "Stopping W3SVC service on {{ inventory_hostname }}..."
+        msg: "Executing: Stop-Service W3SVC on {{ inventory_hostname }}"
+      changed_when: true # Forces the "Changed" status in AAP
 
-    - name: Verify service is stopped
+    - name: "VERIFY: W3SVC service confirmed stopped"
       ansible.builtin.debug:
-        msg: "W3SVC service confirmed stopped on {{ inventory_hostname }}"
+        msg: "Status: Service Stopped. Port 80 is no longer listening."
