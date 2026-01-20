@@ -4,15 +4,14 @@
   gather_facts: false
   serial: 1 
   tasks:
-    - name: "MECM: Execute local software update installation"
+    - name: "MECM Execute local software update installation"
       microsoft.mecm.install_updates:
         allow_reboot: false
         reboot_timeout_minutes: 0
       register: install_result
-      check_mode: true
       changed_when: true
 
-    - name: "MECM: Capture Update Status"
+    - name: "MECM Capture Update Status"
       ansible.builtin.debug:
         msg: 
           - "Host: {{ inventory_hostname }}"
@@ -27,7 +26,7 @@
         action: "ClientNotificationSUMDeplEvalNow"
         collection_name: "PROD-Web-Servers"
       run_once: true 
-      check_mode: true
+
 # ---
 # - name: Remediate Web Servers Compliance
 #   hosts: MainMECM
