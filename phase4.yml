@@ -4,12 +4,6 @@
   gather_facts: false
   serial: 1 
   tasks:
-    - name: "PRE-FLIGHT: Querying for Required Security Artifacts"
-      ansible.windows.win_shell: |
-        Get-CimInstance -Namespace "root\ccm\ClientSDK" -ClassName "CCM_SoftwareUpdate" | Where-Object { $_.ComplianceState -eq 0 }
-      register: mcfm_updates
-      # failed_when: false
-
     - name: "MECM Execute local software update installation"
       microsoft.mecm.install_updates:
         allow_reboot: false
