@@ -16,14 +16,15 @@
       ansible.builtin.debug:
         var: install_result
 
-    - name: "Report success back to MECM Site Server"
+- name: Report Patch Success
+  hosts: MainMECM
+  gather_facts: false
+  tasks:
+    - name: "Report patch success on web servers to MECM"
       microsoft.mecm.client_action:
         site_code: "PS1"
         action: "ClientNotificationSUMDeplEvalNow"
         collection_name: "PROD-Web-Servers"
-      delegate_to: MainMECM
-      run_once: true 
-
 # ---
 # - name: Run Patch Enforcement
 #   hosts: PROD_Web_Servers
