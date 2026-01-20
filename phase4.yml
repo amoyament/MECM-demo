@@ -10,6 +10,7 @@
           reboot_required: true
           updates_installed: [KB810649, KB814033, KB311967, KB317277]
           msg: "Installation of 4 updates completed successfully"
+      changed_when: true
 
     - name: "AUDIT: Verify successful patch application in logs"
       ansible.builtin.debug:
