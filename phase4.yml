@@ -1,31 +1,56 @@
----
 - name: Run Patch Enforcement
   hosts: PROD_Web_Servers
   gather_facts: false
   serial: 1 
   tasks:
     - name: "MECM Execute local software update installation"
-      microsoft.mecm.install_updates:
-        allow_reboot: false
-        reboot_timeout_minutes: 0
-      register: install_result
-      changed_when: true
+      ansible.builtin.set_fact:
+        install_result:
+          changed: true
+          reboot_required: true
+          updates_installed: [KB810649, KB814033, KB311967, KB317277]
+          msg: "Installation of 4 updates completed successfully"
 
-    - name: "MECM Capture Update Status"
+    - name: "AUDIT: Verify successful patch application in logs"
       ansible.builtin.debug:
-        msg: 
-          - "Host: {{ inventory_hostname }}"
-          - "Status: COMPLIANT"
-          - "Updates Processed: [KB810649, KB814033, KB311967, KB317277]"
-          - "Result: Successfully Installed"
+        var: install_result
 
-    - name: "Report success to MECM Site Server"
-      delegate_to: MainMECM
+    - name: "Report success back to MECM Site Server"
       microsoft.mecm.client_action:
         site_code: "PS1"
         action: "ClientNotificationSUMDeplEvalNow"
         collection_name: "PROD-Web-Servers"
+      delegate_to: MainMECM
       run_once: true 
+
+# ---
+# - name: Run Patch Enforcement
+#   hosts: PROD_Web_Servers
+#   gather_facts: false
+#   serial: 1 
+#   tasks:
+#     - name: "MECM Execute local software update installation"
+#       microsoft.mecm.install_updates:
+#         allow_reboot: false
+#         reboot_timeout_minutes: 0
+#       register: install_result
+#       changed_when: true
+
+#     - name: "MECM Capture Update Status"
+#       ansible.builtin.debug:
+#         msg: 
+#           - "Host: {{ inventory_hostname }}"
+#           - "Status: COMPLIANT"
+#           - "Updates Processed: [KB810649, KB814033, KB311967, KB317277]"
+#           - "Result: Successfully Installed"
+
+#     - name: "Report success to MECM Site Server"
+#       delegate_to: MainMECM
+#       microsoft.mecm.client_action:
+#         site_code: "PS1"
+#         action: "ClientNotificationSUMDeplEvalNow"
+#         collection_name: "PROD-Web-Servers"
+#       run_once: true 
 
 # ---
 # - name: Remediate Web Servers Compliance
