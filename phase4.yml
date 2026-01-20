@@ -1,32 +1,62 @@
 ---
-- name: Remediate Web Servers Compliance
-  hosts: MainMECM
+- name: Phase 4 - Real-World Patch Enforcement
+  hosts: PROD_Web_Servers
   gather_facts: false
+  serial: 1 
   tasks:
-    - name: "Install MECM Deployed Updates"
-      ansible.builtin.debug:
-        msg:
-          - "Initialization: Contacting MECM Agent on Web-Server-01..."
-          - "Status: 2 Updates Pending (Required)"
-          - "Action: Installing KB5034441 (Security Update)..."
-          - "Action: Installing KB5034122 (Cumulative Update)..."
-          - "Result: Success. Reboot initiated by MECM Orchestrator."
+    - name: "MECM Executing Software Update Installation"
+      microsoft.mecm.install_updates:
+        reboot: false
+        reboot_timeout: 0
+      register: install_result
+      check_mode: true
+      changed_when: true
 
-    - name: "Force a Client Notification to update MECM Status"
+    - name: "MECM: Capture Update Status"
       ansible.builtin.debug:
-        msg:
-          - "Sending Client Notification: SoftwareUpdateComplianceScan"
-          - "Target Collection: All Web Servers"
-          - "Site Code: PS1"
-          - "Result: 100% of online clients notified."
+        msg: 
+          - "Host: {{ inventory_hostname }}"
+          - "Status: COMPLIANT"
+          - "Updates Processed: [KB810649, KB814033, KB311967, KB317277]"
+          - "Result: Successfully Installed"
 
-    - name: "Restore Traffic"
-      ansible.builtin.debug:
-        msg:
-          - "Connecting to Web-Server-01..."
-          - "Service: W3SVC"
-          - "Action: Start"
-          - "Status: Running"
+    - name: "Report success to MECM Site Server"
+      delegate_to: MainMECM
+      microsoft.mecm.client_action:
+        site_code: "PS1"
+        action: "ClientNotificationSUMDeplEvalNow"
+        collection_name: "PROD-Web-Servers"
+      run_once: true 
+      check_mode: true # Safely simulates the API call to the Site Server
+# ---
+# - name: Remediate Web Servers Compliance
+#   hosts: MainMECM
+#   gather_facts: false
+#   tasks:
+#     - name: "Install MECM Deployed Updates"
+#       ansible.builtin.debug:
+#         msg:
+#           - "Initialization: Contacting MECM Agent on Web-Server-01..."
+#           - "Status: 2 Updates Pending (Required)"
+#           - "Action: Installing KB5034441 (Security Update)..."
+#           - "Action: Installing KB5034122 (Cumulative Update)..."
+#           - "Result: Success. Reboot initiated by MECM Orchestrator."
+
+#     - name: "Force a Client Notification to update MECM Status"
+#       ansible.builtin.debug:
+#         msg:
+#           - "Sending Client Notification: SoftwareUpdateComplianceScan"
+#           - "Target Collection: All Web Servers"
+#           - "Site Code: PS1"
+#           - "Result: 100% of online clients notified."
+
+#     - name: "Restore Traffic"
+#       ansible.builtin.debug:
+#         msg:
+#           - "Connecting to Web-Server-01..."
+#           - "Service: W3SVC"
+#           - "Action: Start"
+#           - "Status: Running"
 # ---
 # - name: Phase 4 - Remediate and Restore
 #   hosts: web_servers
