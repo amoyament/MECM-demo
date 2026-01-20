@@ -4,10 +4,10 @@
   gather_facts: false
   serial: 1 
   tasks:
-    - name: "MECM Executing Software Update Installation"
+    - name: "MECM: Execute local software update installation (Check Mode)"
       microsoft.mecm.install_updates:
-        reboot: false
-        reboot_timeout: 0
+        allow_reboot: false
+        reboot_timeout_minutes: 0
       register: install_result
       check_mode: true
       changed_when: true
