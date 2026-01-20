@@ -27,7 +27,7 @@
         action: "ClientNotificationSUMDeplEvalNow"
         collection_name: "PROD-Web-Servers"
       run_once: true 
-      check_mode: true # Safely simulates the API call to the Site Server
+      check_mode: true
 # ---
 # - name: Remediate Web Servers Compliance
 #   hosts: MainMECM
