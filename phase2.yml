@@ -10,8 +10,15 @@
         collection_name: "PROD-Web-Servers"
       register: deploy_status
 
+    - name: "DEMO: Displaying Current Compliance Metrics"
+      ansible.builtin.debug:
+        msg: 
+          - "Target Count: {{ deploy_status.software_update_deployments[0].compliance_status.target_count }}"
+          - "Compliant Count: {{ deploy_status.software_update_deployments[0].compliance_status.compliant_count }}"
+      # This looks great in the Arcade logs to show the "gap"
+
     - name: Assert all servers are compliant
       ansible.builtin.assert:
         that:
-          - deploy_status.software_update_deployments[0].compliant_count == deploy_status.software_update_deployments[0].target_count
+          - deploy_status.software_update_deployments[0].compliance_status.compliant_count == deploy_status.software_update_deployments[0].target_count
         fail_msg: "Compliance Failure: Web servers are missing required patches. Triggering Drain Workflow."
