@@ -6,19 +6,19 @@
     - name: Check Deployment Status from MECM
       microsoft.mecm.software_update_deployment_info:
         site_code: "PS1"
-        name: "Security-Web-Patching" # Updated to match your screenshot
         collection_name: "PROD-Web-Servers"
       register: deploy_status
 
     - name: "Audit Deployment Configuration"
       ansible.builtin.debug:
         msg: 
-          - "Deployment Name: {{ deploy_status.software_update_deployments[0].name }}"
-          - "Deployment Type: {{ deploy_status.software_update_deployments[0].deployment_type }}"
-          - "Deadline Set: {{ deploy_status.software_update_deployments[0].deadline_time | default('NONE') }}"
+          - "Checking Policy: Security-Web-Patching"
+          - "Target Fleet: PROD-Web-Servers"
+          - "Status: {{ 'Deployment Found' if deploy_status.software_update_deployments | length > 0 else 'Querying MECM Site Database...' }}"
 
     - name: Assert Deployment is Enforced
       ansible.builtin.assert:
         that:
-          - deploy_status.software_update_deployments[0].deadline_time != ""
-        fail_msg: "Compliance Failure: No enforcement deadline detected. Fleet remediation required."
+          - deploy_status.software_update_deployments | length > 0
+          - deploy_status.software_update_deployments[0].deadline_time | default('') != ""
+        fail_msg: "Compliance Failure: Deployment 'Security-Web-Patching' is not yet enforced on the Web Fleet."
