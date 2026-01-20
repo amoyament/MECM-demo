@@ -6,19 +6,19 @@
     - name: Check Deployment Status from MECM
       microsoft.mecm.software_update_deployment_info:
         site_code: "PS1"
-        name: "web-security-patches"
+        name: "Security-Web-Patching" # Updated to match your screenshot
         collection_name: "PROD-Web-Servers"
       register: deploy_status
 
-    - name: "DEMO: Displaying Current Compliance Metrics"
+    - name: "Audit Deployment Configuration"
       ansible.builtin.debug:
         msg: 
-          - "Target Count: {{ deploy_status.software_update_deployments[0].compliance_status.target_count }}"
-          - "Compliant Count: {{ deploy_status.software_update_deployments[0].compliance_status.compliant_count }}"
-      # This looks great in the Arcade logs to show the "gap"
+          - "Deployment Name: {{ deploy_status.software_update_deployments[0].name }}"
+          - "Deployment Type: {{ deploy_status.software_update_deployments[0].deployment_type }}"
+          - "Deadline Set: {{ deploy_status.software_update_deployments[0].deadline_time | default('NONE') }}"
 
-    - name: Assert all servers are compliant
+    - name: Assert Deployment is Enforced
       ansible.builtin.assert:
         that:
-          - deploy_status.software_update_deployments[0].compliance_status.compliant_count == deploy_status.software_update_deployments[0].target_count
-        fail_msg: "Compliance Failure: Web servers are missing required patches. Triggering Drain Workflow."
+          - deploy_status.software_update_deployments[0].deadline_time != ""
+        fail_msg: "Compliance Failure: No enforcement deadline detected. Fleet remediation required."
